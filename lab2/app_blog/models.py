@@ -11,11 +11,22 @@ class Category(models.Model):
                                 max_length=250, help_text='Максимум 250 символів')
 
     slug = models.SlugField('Слаг', unique=True, null=True)
+
+    def get_absolute_url(self):
+        try:
+            url = reverse('articles-category-list',
+                          kwargs={'slug': self.slug})
+            return url
+        except:
+            url = "/"
+            return url
     class Meta:
         verbose_name = 'Категорія для публікації'
         verbose_name_plural = 'Категорії для публікацій'
         def __str__(self):
             return self.category
+
+
 class Article(models.Model):
     title = models.CharField('Заголовок', max_length=250,
                               help_text='Максимум 250 символів')
@@ -44,16 +55,17 @@ class Article(models.Model):
 
     def get_absolute_url(self):
         try:
-            url = reverse('news - detail',
+            url = reverse('news-detail',
                           kwargs={
                               'year': self.pub_date.strftime("%Y"),
                               'month': self.pub_date.strftime("%m"),
                               'day': self.pub_date.strftime("%d"),
                               'slug': self.slug,
                           })
-        except:
+            return url
+        except Exception as e:
             url = "/"
-        return url
+            return url
     class Meta:
         ordering = ['-pub_date']
         verbose_name = 'Стаття'
